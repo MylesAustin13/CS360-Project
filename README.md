@@ -9,7 +9,7 @@
 ## Current Objectives
 
 1) Write test program - DONE
-2) Write program to convert C to assembly - WiP
+2) Write program to convert C to assembly - WiP, Parsing code available
 3) Create interactive UI to show code running step by step
 4) Visually represent Memory, Registers, and rsp, rbp, etc.
 
