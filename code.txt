@@ -1,0 +1,53 @@
+/*
+sets title_ to the given value
+*/
+void setTitle(string title){
+  title_ = title;
+  return;
+}
+
+
+/*
+sets author_ to the given value
+*/
+void setAuthor(string author){
+  author_ = author;
+  return;
+}
+
+
+/*
+sets album_ to the given value
+*/
+void setAlbum(string album){
+  album_ = album;
+  return;
+}
+
+
+/*
+returns the song's title
+*/
+string getTitle() const{
+
+  return title_;
+}
+
+
+/*
+returns the song's author
+*/
+string getAuthor() const{
+
+  return author_;
+}
+
+
+/*
+returns the song's album
+*/
+string getAlbum() const{
+
+  return album_;
+}
+
