@@ -25,20 +25,27 @@ string getName(string header){
 }
 
 vector<string> getParas(string header){
-  size_t paren_index = header.find('(');
+  size_t paren_index = header.find('('); 
   size_t space_index = header.find(' ', paren_index);
   size_t comma_index = header.find(',', space_index);
+
+  size_t letter_index = header.find_first_of("abcdefghijklmnopqrstuvwxyz", paren_index);
   vector<string> result;
     
-  result.push_back(header.substr(paren_index + 1, space_index - paren_index)); //from the start of the word to the space
+  result.push_back(header.substr(letter_index, space_index - letter_index)); //from the start of the word to the space
 
   comma_index = header.find(',',comma_index); //Find the next comma
-  space_index = header.find(' ',comma_index); //Find the nex space after this comma
+  letter_index = header.find_first_of("abcdefghijklmnopqrstuvwxyz", comma_index); //Find next parameter type
+  space_index = header.find(' ', letter_index);//Find the space after it
   
   while(comma_index != string::npos){ //While there are commas
-    result.push_back(header.substr(comma_index + 1, space_index - comma_index)); //Add to vector
-    comma_index = header.find(',',comma_index); //Find the next comma
-    space_index = header.find(' ',comma_index); //Find the nex space after this comma
+    
+    result.push_back(header.substr(letter_index, space_index - letter_index)); //Add to vector
+    comma_index = header.find(',',comma_index+1); //Find the next comma
+    letter_index = header.find_first_of("abcdefghijklmnopqrstuvwxyz", comma_index); //Find next parameter type
+    space_index = header.find(' ',letter_index+2); //Find the next space after the parameter type
+    
+    
 		  
   }
   return result;
@@ -75,7 +82,7 @@ int parseCode(string code){
   
   int * line_count = new int;
   string* lines = getLines(code, line_count);
-
+  //cout << "Got the lines" << endl;
   int header_indices[*line_count];
   int header_indices_size = 0;
 
@@ -109,8 +116,9 @@ int parseCode(string code){
     bool found_bracket = false;
     bool found_paren = false;
     
-    if(code_words[0] == "int" || code_words[0] == "string" || code_words[0] == "bool" || code_words[0] == "void"){ //First word is the type
+    if(code_words.size() > 0 && (code_words[0] == "int" || code_words[0] == "string" || code_words[0] == "bool" || code_words[0] == "void")){ //First word is the type
       //Could be var or function
+      
       for( int s = 1; s < code_words.size(); s++){  //Find the opening brace, if there is one
 	if(code_words[s].find('{') != string::npos){
 	  
@@ -139,12 +147,13 @@ int parseCode(string code){
 	}
 	
 	func temp = {getName(code_words[1]), code_words[0], i, l};
-
+	
 	if(code_words[1].find(')') == string::npos){ //If there is a space between ( and ), check for args
+	  
 	  temp.para_types = getParas(temp_line);
 	  temp.para_count = temp.para_types.size();
 	}
-	
+       
 	func_list.push_back(temp);
 	
       }
@@ -154,7 +163,9 @@ int parseCode(string code){
 	
       }
     }
+   
   }
+  
   cout << "The list: " << endl;  //FOR TESTING
   for(int j = 0; j < func_list.size(); j++){
     cout << func_list[j].ret_type << ", " << func_list[j].name << ", " << func_list[j].start_index << "-" << func_list[j].end_index << endl;
@@ -185,15 +196,20 @@ int main(){
   string real_code = "";
   string code_line = "";
   
+  
   ifstream codeFile("code2.txt");
+  
   if (codeFile){
-    while( getline( codeFile, code_line)){
-       
+    while( !getline( codeFile, code_line).eof()){
+      
+      code_line += '\n';
       real_code += code_line;
-      real_code += '\n';
+      
+     
     }
+    
   }
   cout << real_code << endl;
-  
+
   parseCode(real_code);
 }
